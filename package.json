@@ -1,0 +1,23 @@
+{
+  "name": "shots",
+  "version": "1.0.0",
+  "description": "A way to quickly create a PDF of screens of a gov.uk prototype.",
+  "main": "pdf.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/morganesque/shots.git"
+  },
+  "author": "Tom Morgan",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/morganesque/shots/issues"
+  },
+  "homepage": "https://github.com/morganesque/shots#readme",
+  "dependencies": {
+    "colors": "^1.1.2",
+    "pdfkit": "^0.7.1"
+  }
+}
