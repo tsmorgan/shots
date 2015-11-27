@@ -4,9 +4,11 @@ A way to quickly create a PDF of screens of a gov.uk prototype.
 ## Getting started
 
 ###  Webkit2PNG
-Although the script is written in Node.js it uses a Python script called [webkit2png](http://www.paulhammond.org/webkit2png/) to create the screenshots. Bit weird I know, it means you’ll need to install that first. I think [Homebrew](http://brew.sh/) is the easiest way. 
+Although the script is written in Node it uses a Python script called [webkit2png](http://www.paulhammond.org/webkit2png/) to create the screenshots. Bit weird I know, it means you’ll need to install that first. I think [Homebrew](http://brew.sh/) is the easiest way. 
 
-> Nb.If you’re on El Crapitan there might be another hurdle to jump through to do with added security, you might need to [edit the webkit2png](https://github.com/bendalton/webkit2png/commit/9a96ac8977c386a84edb674ca1518e90452cee88) script to get around this.
+```brew install webkit2png```
+
+> **WARNING!** If you’re on El Crapitan there might be another hurdle to jump to do with added security. You might need to [edit the webkit2png](https://github.com/bendalton/webkit2png/commit/9a96ac8977c386a84edb674ca1518e90452cee88) script to get around this.
 
 ###  Setting up (first time only)
 

@@ -53,7 +53,7 @@ try {
     for (var i = 0; i < pages.length; i++) {
       
       var file = pages[i];
-      var command = "webkit2png -F " + json.webPath + file + "  -o "+dir+'/'+file;
+      var command = "webkit2png -F " + json.webPath + file + "  -o "+dir+'/'+file+" --ignore-ssl-check";
       exec(command,function()
       {
         process.stdout.write('#'.white);
