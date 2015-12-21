@@ -1,10 +1,9 @@
-var sys     = require('sys'),
-    exec    = require('child_process').exec,
+var exec    = require('child_process').exec,
     fs      = require('fs'),
     pdfdoc  = require('pdfkit'),
     colors  = require('colors'),
     dir     = process.argv.slice(2)[0],
-    done = 0, data, json, pages;
+    done    = 0, data, json, pages;
 
 // check whether they've passed a folder name in the command.
 if (typeof dir == 'undefined') {
@@ -51,9 +50,15 @@ try {
     process.stdout.write('generating screenshots '.red);
 
     for (var i = 0; i < pages.length; i++) {
-      
-      var file = pages[i];
-      var command = "webkit2png -F " + json.webPath + file + "  -o "+dir+'/'+file+" --ignore-ssl-check";
+      if (typeof pages[i] == 'string')
+      {
+        var file = pages[i];
+        var command = "webkit2png -F " + json.webPath + file + " -o "+dir+'/'+file+" --ignore-ssl-check";
+      } else {
+        var file = pages[i][0], js = pages[i][1];
+        var command = "webkit2png -F " + json.webPath + file + " -o "+dir+'/'+file+" --js='"+js+"'"+" --ignore-ssl-check";
+      }
+
       exec(command,function()
       {
         process.stdout.write('#'.white);
@@ -99,7 +104,12 @@ function createPDF()
   // adding them all to the PDF
   for (var i = 0; i < pages.length; i++)
   {
-    var file    = dir+'/'+pages[i]+'-full.png';
+    if (typeof pages[i] == 'string')
+    {
+      var file = dir+'/'+pages[i]+'-full.png';
+    } else {
+      var file = dir+'/'+pages[i][0]+'-full.png';
+    }    
     var suffix  = file.substr(-4);
     process.stdout.write('#'.white);
 
