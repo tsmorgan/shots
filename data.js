@@ -1,6 +1,6 @@
 {
   "webPath": "http://localhost:3000/application/mvp/",
-  "outputFilename": "screens.pdf",
+  "outputFilename": "atwsa-screens.pdf",
   "keepPNGs": false,
   "pages": [
     "index",

@@ -21,7 +21,7 @@ try {
   if (s.isDirectory())
   {
     // grab the data file from the folder.
-    var datafile = __dirname + '/' + dir + '/data.js'; 
+    var datafile = __dirname + '/' + dir + '/data.js';
     console.log("Reading: "+datafile.green);
 
     try {
@@ -30,11 +30,10 @@ try {
       data = fs.readFileSync(datafile).toString();
     } catch(err) {
       console.log("File doesn't exist!".red);
-      console.log("You need a "+"data.js".yellow+" file in your "+dir.yellow+" folder."); 
+      console.log("You need a "+"data.js".yellow+" file in your "+dir.yellow+" folder.");
       process.exit();
     }
-    
-    
+
     try {
       json = JSON.parse(data);
     } catch (e) {
@@ -44,33 +43,36 @@ try {
                   " and sort it out!");
       process.exit();
     }
-    
+
     pages = json.pages;
+    if (!json.width) json.width = 960;
 
     process.stdout.write('generating screenshots '.red);
 
     for (var i = 0; i < pages.length; i++) {
+
       if (typeof pages[i] == 'string')
       {
-        var file = pages[i];
-        var command = "webkit2png -F " + json.webPath + file + " -o "+dir+'/'+file+" --ignore-ssl-check";
+        var file = pages[i].replace(/\//g,'_');
       } else {
-        var file = pages[i][0], js = pages[i][1];
-        var command = "webkit2png -F " + json.webPath + file + " -o "+dir+'/'+file+" --js='"+js+"'"+" --ignore-ssl-check";
+        var file = pages[i][0].replace(/\//g,'_'), js = pages[i][1];
       }
+
+      var command = "webkit2png -W "+json.width+" -TF " + json.webPath + file + " -o "+dir+'/'+file+" --ignore-ssl-check";
+      if (js) command = command + " --js='"+js+"'";
 
       exec(command,function()
       {
         process.stdout.write('#'.white);
         // if we've done all of them set off the PDF creation.
         done++;
-        if (done == pages.length) 
+        if (done == pages.length)
         {
           process.stdout.write("\n");
           createPDF();
         }
       });
-    };      
+    };
 
   } else {
 
@@ -94,9 +96,9 @@ function createPDF()
   process.stdout.write('adding to PDF          '.yellow);
   var page = {
     width:595,  // A4 width (in pts at 72dpi)
-    height:842, // A4 height 
+    height:842, // A4 height
     margin:20   // margin!
-  };      
+  };
 
   // create a document object
   var doc = new pdfdoc({size:[page.width,page.height]});
@@ -106,10 +108,11 @@ function createPDF()
   {
     if (typeof pages[i] == 'string')
     {
-      var file = dir+'/'+pages[i]+'-full.png';
+      var filename = pages[i].replace(/\//g,'_');
     } else {
-      var file = dir+'/'+pages[i][0]+'-full.png';
-    }    
+      var filename = pages[i][0].replace(/\//g,'_');
+    }
+    var file = dir+'/'+filename+'-full.png';
     var suffix  = file.substr(-4);
     process.stdout.write('#'.white);
 
@@ -122,7 +125,7 @@ function createPDF()
 
     // then delete the png file.
     if (!json.keepPNGs) fs.unlink(file);
-  }  
+  }
 
   // create the file.
   doc.pipe(fs.createWriteStream(dir+"/"+json.outputFilename));
