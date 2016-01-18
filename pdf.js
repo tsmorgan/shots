@@ -21,7 +21,7 @@ try {
   if (s.isDirectory())
   {
     // grab the data file from the folder.
-    var datafile = __dirname + '/' + dir + '/data.js';
+    var datafile = __dirname + '/' + dir + '/data.json';
     console.log("Reading: "+datafile.green);
 
     try {
@@ -30,7 +30,7 @@ try {
       data = fs.readFileSync(datafile).toString();
     } catch(err) {
       console.log("File doesn't exist!".red);
-      console.log("You need a "+"data.js".yellow+" file in your "+dir.yellow+" folder.");
+      console.log("You need a "+"data.json".yellow+" file in your "+dir.yellow+" folder.");
       process.exit();
     }
 
@@ -49,16 +49,25 @@ try {
 
     process.stdout.write('generating screenshots '.red);
 
-    for (var i = 0; i < pages.length; i++) {
-
+    for (var i = 0; i < pages.length; i++)
+    {
       if (typeof pages[i] == 'string')
       {
+        var url = pages[i];
         var file = pages[i].replace(/\//g,'_');
       } else {
+        var url = pages[i][0];
         var file = pages[i][0].replace(/\//g,'_'), js = pages[i][1];
       }
 
-      var command = "webkit2png -W "+json.width+" -TF " + json.webPath + file + " -o "+dir+'/'+file+" --ignore-ssl-check";
+      var command =   "webkit2png"
+                    +" --width "+json.width
+                    + " -TF "
+                    + " -o "+dir+'/'+file
+                    + " -s 1"
+                    + " --ignore-ssl-check"
+                    + json.webPath + url;
+
       if (js) command = command + " --js='"+js+"'";
 
       exec(command,function()
