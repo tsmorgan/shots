@@ -61,12 +61,11 @@ try {
       }
 
       var command =   "webkit2png"
-                    +" --width "+json.width
-                    + " -TF "
+                    + " -W "+json.width
+                    + " -TF "+json.webPath + url
                     + " -o "+dir+'/'+file
                     + " -s 1"
-                    + " --ignore-ssl-check"
-                    + json.webPath + url;
+                    + " --ignore-ssl-check";
 
       if (js) command = command + " --js='"+js+"'";
 
