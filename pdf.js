@@ -11,6 +11,14 @@ if (typeof dir == 'undefined') {
   process.exit();
 }
 
+/*
+'Reading file           '
+'generating screenshots '
+'adding to PDF          '
+'resizing images        '
+'resizing thumbs        '
+*/
+
 // remove any trailing slash from the folder name.
 if (dir.substr(-1) === '/') dir = dir.substr(0, dir.length - 1);
 
@@ -22,7 +30,7 @@ try {
   {
     // grab the data file from the folder.
     var datafile = __dirname + '/' + dir + '/data.json';
-    console.log("Reading: "+datafile.green);
+    console.log('Reading file           '.white+datafile.green);
 
     try {
       // read the datafile.
@@ -138,5 +146,28 @@ function createPDF()
   // create the file.
   doc.pipe(fs.createWriteStream(dir+"/"+json.outputFilename));
   doc.end();
-  process.stdout.write("\nwriting PDF\n".green);
+  process.stdout.write("\n");
+  resizeImages();
+}
+
+function resizeImages()
+{
+  var final_command = "mogrify -resize '1280' "+dir+"/*full.png";
+  process.stdout.write("resizing images        ".magenta);
+  exec(final_command,function()
+  {
+    process.stdout.write("done\n".white);
+    resizeThumbs();
+  });
+}
+
+function resizeThumbs()
+{
+  var final_command = "mogrify -resize '320' "+dir+"/*thumb.png";
+  process.stdout.write('resizing thumbs        '.cyan);
+  exec(final_command,function()
+  {
+    process.stdout.write("done\n".white);
+    process.stdout.write("and now I'm done.\n".green);
+  });
 }
