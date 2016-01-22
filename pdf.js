@@ -53,7 +53,7 @@ try {
     }
 
     pages = json.pages;
-    if (!json.width) json.width = 960;
+    if (!json.browserWidth) json.browserWidth = 960;
 
     process.stdout.write('generating screenshots '.red);
 
@@ -69,7 +69,7 @@ try {
       }
 
       var command =   "webkit2png"
-                    + " -W "+json.width
+                    + " -W "+json.browserWidth
                     + " -TF "+json.webPath + url
                     + " -o "+dir+'/'+file
                     + " -s 1"
@@ -140,21 +140,30 @@ function createPDF()
     }
 
     // then delete the png file.
-    if (!json.keepPNGs) fs.unlink(file);
+    if (!json.keepPNGs)
+    {
+      fs.unlink(file);
+      var thumb = dir+'/'+filename+'-thumb.png';
+      fs.unlink(thumb);
+    }
   }
 
   // create the file.
-  doc.pipe(fs.createWriteStream(dir+"/"+json.outputFilename));
+  doc.pipe(fs.createWriteStream(dir+"/"+json.output));
   doc.end();
   process.stdout.write("\n");
-  resizeImages();
+
+  // then resize the images (if asked too)
+  if (json.resize && json.keepPNGs == true) resizeImages();
+  else process.stdout.write("and now I'm done.\n".green);
 }
 
 function resizeImages()
 {
-  var final_command = "mogrify -resize '1280' "+dir+"/*full.png";
+  var command = "mogrify -resize '"+json.resize.full_width+"' "+dir+"/*full.png";
+  console.log(command);
   process.stdout.write("resizing images        ".magenta);
-  exec(final_command,function()
+  exec(command,function()
   {
     process.stdout.write("done\n".white);
     resizeThumbs();
@@ -163,9 +172,10 @@ function resizeImages()
 
 function resizeThumbs()
 {
-  var final_command = "mogrify -resize '320' "+dir+"/*thumb.png";
+  var command = "mogrify -resize '"+json.resize.thumb_width+"' "+dir+"/*thumb.png";
+  console.log(command); 
   process.stdout.write('resizing thumbs        '.cyan);
-  exec(final_command,function()
+  exec(command,function()
   {
     process.stdout.write("done\n".white);
     process.stdout.write("and now I'm done.\n".green);
