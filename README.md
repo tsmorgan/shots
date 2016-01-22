@@ -6,14 +6,18 @@ A way to quickly create a PDF of screens of a gov.uk prototype.
 ###  Webkit2PNG
 Although the script is written in Node it uses a Python script called [webkit2png](http://www.paulhammond.org/webkit2png/) to create the screenshots. Bit weird I know, it means you’ll need to install that first. I think [Homebrew](http://brew.sh/) is the easiest way.
 
-```brew install webkit2png```
+```bash
+brew install webkit2png
+```
 
 > **WARNING!** If you’re on El Crapitan there might be another hurdle to jump to do with added security. You might need to [edit the webkit2png](https://github.com/bendalton/webkit2png/commit/9a96ac8977c386a84edb674ca1518e90452cee88) script to get around this.
 
 ## mogrify
 [Mogrify](http://www.imagemagick.org/script/mogrify.php) is a image processing command which comes with ImageMagick. I found I needed a little more control over the sizing of the resulting PNG files than `webkit2png` was giving me. Sadly though it's another dependancy you'll have to install yourself.
 
-```brew install imagemagick```
+```bash
+brew install imagemagick
+```
 
 If you have any problems with this or simply don't want to resize the images then set the `resize` option to `false` or just delete it completely from the `data.json` file.
 
@@ -37,7 +41,7 @@ In order to create a set of screens and/or a PDF there's a couple of things you 
 
 * Edit your new `data.js`
 
-### data.js
+### data.json
 ```json
 {
   "webPath": "http://domain/path/path/",
