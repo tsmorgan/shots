@@ -1,7 +1,7 @@
 {
   "webPath": "http://localhost:3000/application/mvp/",
   "output": "atwsa-screens.pdf",
-  "keepPNGs": false,
+  "keepPNGs": true,
   "browserWidth": 960,
   "resize" : {
     "full_width": 1280,

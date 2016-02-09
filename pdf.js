@@ -62,10 +62,10 @@ try {
       if (typeof pages[i] == 'string')
       {
         var url = pages[i];
-        var file = pages[i].replace(/\//g,'_');
+        var file = pages[i].replace(/\//g,'');
       } else {
         var url = pages[i][0];
-        var file = pages[i][0].replace(/\//g,'_'), js = pages[i][1];
+        var file = pages[i][0].replace(/\//g,''), js = pages[i][1];
       }
 
       var command =   "webkit2png"
@@ -124,9 +124,9 @@ function createPDF()
   {
     if (typeof pages[i] == 'string')
     {
-      var filename = pages[i].replace(/\//g,'_');
+      var filename = pages[i].replace(/\//g,'');
     } else {
-      var filename = pages[i][0].replace(/\//g,'_');
+      var filename = pages[i][0].replace(/\//g,'');
     }
     var file = dir+'/'+filename+'-full.png';
     var suffix  = file.substr(-4);
@@ -161,7 +161,6 @@ function createPDF()
 function resizeImages()
 {
   var command = "mogrify -resize '"+json.resize.full_width+"' "+dir+"/*full.png";
-  console.log(command);
   process.stdout.write("resizing images        ".magenta);
   exec(command,function()
   {
@@ -173,7 +172,6 @@ function resizeImages()
 function resizeThumbs()
 {
   var command = "mogrify -resize '"+json.resize.thumb_width+"' "+dir+"/*thumb.png";
-  console.log(command); 
   process.stdout.write('resizing thumbs        '.cyan);
   exec(command,function()
   {
