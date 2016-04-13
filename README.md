@@ -37,9 +37,9 @@ In order to create a set of screens and/or a PDF there's a couple of things you 
 
 * Create a folder for them to go into (ie. `mkdir <foldername>`)
 
-* Copy `data.js` into this folder. (ie. `cp data.js <foldername>`)
+* Copy `data.json` into this folder. (ie. `cp data.json <foldername>`)
 
-* Edit your new `data.js`
+* Edit your new `data.json`
 
 ### data.json
 ```json
