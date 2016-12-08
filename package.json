@@ -18,6 +18,7 @@
   "homepage": "https://github.com/morganesque/shots#readme",
   "dependencies": {
     "colors": "^1.1.2",
-    "pdfkit": "^0.7.1"
+    "pdfkit": "^0.7.1",
+    "webshot": "^0.18.0"
   }
 }

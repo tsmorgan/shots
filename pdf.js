@@ -1,6 +1,7 @@
 var exec    = require('child_process').exec,
     fs      = require('fs'),
     pdfdoc  = require('pdfkit'),
+    webshot = require('webshot'),
     colors  = require('colors'),
     dir     = process.argv.slice(2)[0],
     done    = 0, data, json, pages;
@@ -23,7 +24,7 @@ if (typeof dir == 'undefined') {
 if (dir.substr(-1) === '/') dir = dir.substr(0, dir.length - 1);
 
 try {
-  // right now check whether the folder exists.
+  // check whether the folder exists.
   var s = fs.statSync(dir);
   // check the folder is in fact an actual folder.
   if (s.isDirectory())
@@ -34,7 +35,6 @@ try {
 
     try {
       // read the datafile.
-      var s = fs.statSync(datafile);
       data = fs.readFileSync(datafile).toString();
     } catch(err) {
       console.log("File doesn't exist!".red);
@@ -43,9 +43,9 @@ try {
     }
 
     try {
+      // see if it's real JSON
       json = JSON.parse(data);
     } catch (e) {
-      // console.error(e);
       console.log("JSON isn\'t quite right in there.\n".red+
                   "Try pasting it in here: https://jsonformatter.curiousconcept.com/".red+
                   " and sort it out!");
@@ -57,8 +57,17 @@ try {
 
     process.stdout.write('generating screenshots '.red);
 
+    var webshot_options = {
+      screenSize: { width:json.browserWidth, height:json.browserWidth*1.42 },
+      shotSize: { width:"all", height:"all" },
+      quality: 100
+    };
+
     for (var i = 0; i < pages.length; i++)
     {
+      /*
+        If it's a string grab it and a version without '/'s (for the output file).
+      */
       if (typeof pages[i] == 'string')
       {
         var url = pages[i];
@@ -67,18 +76,17 @@ try {
         var url = pages[i][0];
         var file = pages[i][0].replace(/\//g,''), js = pages[i][1];
       }
+      file += '.png';
 
-      var command =   "webkit2png"
-                    + " -W "+json.browserWidth
-                    + " -TF "+json.webPath + url
-                    + " -o "+dir+'/'+file
-                    + " -s 1"
-                    + " --ignore-ssl-check";
-
-      if (js) command = command + " --js='"+js+"'";
-
-      exec(command,function()
+      /*
+        Take the webshot.
+      */
+      webshot(json.webPath + url, dir+'/'+file, webshot_options, function(error)
       {
+        if (error) {
+          console.error(`error: ${error}`);
+          return;
+        }
         process.stdout.write('#'.white);
         // if we've done all of them set off the PDF creation.
         done++;
@@ -91,7 +99,6 @@ try {
     };
 
   } else {
-
     // what they've passed isn't actually a folder.
     console.log('Hang on! That\'s not a folder.'.red);
   }
@@ -128,7 +135,8 @@ function createPDF()
     } else {
       var filename = pages[i][0].replace(/\//g,'');
     }
-    var file = dir+'/'+filename+'-full.png';
+    
+    var file = dir+'/'+filename+'.png';
     var suffix  = file.substr(-4);
     process.stdout.write('#'.white);
 
