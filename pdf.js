@@ -45,7 +45,6 @@ try {
     try {
       json = JSON.parse(data);
     } catch (e) {
-      // console.error(e);
       console.log("JSON isn\'t quite right in there.\n".red+
                   "Try pasting it in here: https://jsonformatter.curiousconcept.com/".red+
                   " and sort it out!");
@@ -70,9 +69,9 @@ try {
 
       var command =   "webkit2png"
                     + " -W "+json.browserWidth
-                    + " -TF "+json.webPath + url
+                    + " --clipwidth 1"
+                    + " -F "+json.webPath + url
                     + " -o "+dir+'/'+file
-                    + " -s 1"
                     + " --ignore-ssl-check";
 
       if (js) command = command + " --js='"+js+"'";
@@ -129,50 +128,66 @@ function createPDF()
       var filename = pages[i][0].replace(/\//g,'');
     }
     var file = dir+'/'+filename+'-full.png';
-    var suffix  = file.substr(-4);
+
     process.stdout.write('#'.white);
-
-    if (suffix == '.png')
+    /*
+      Documents start with a blank page so only add
+      another for subsequent times.
+    */
+    if (i > 0) doc.addPage();
+    /*
+      Set up the margins and spacing.
+    */
+    var xmarg = page.margin;
+    var image_width = page.width-2*page.margin;
+    /*
+      If the width of the screen shot is less than
+      the width of the page centre don't stretch it.
+    */
+    if (json.browserWidth < image_width)
     {
-      if (typeof first != "undefined") doc.addPage();
-      var first = true;
-      doc.image(file,page.margin,page.margin,{width:page.width-2*page.margin});
+      image_width = json.browserWidth;
+      xmarg = (page.width - image_width)/2;
     }
+    /*
+      Add image to page. Also draw a grey rectangle around it.
+    */
+    doc.image(file,xmarg,page.margin,{width:image_width});
+    doc.strokeColor("#eee");
+    doc.rect(xmarg,page.margin,image_width,page.height-page.margin).stroke();
 
-    // then delete the png file.
-    if (!json.keepPNGs)
-    {
-      fs.unlink(file);
-      var thumb = dir+'/'+filename+'-thumb.png';
-      fs.unlink(thumb);
+    /*
+      Then delete the png file (as required).
+    */
+    //
+    if (!json.keepPNGs) fs.unlink(file);
+    /*
+      The create thumbnails (as required).
+    */
+    if (json.keepPNGs && json.thumbWidth) {
+      var thumbFile = file.replace('full','thumb');
+      fs.writeFileSync(thumbFile, fs.readFileSync(file));
     }
   }
 
-  // create the file.
+  /*
+    Create the PDF file.
+  */
   doc.pipe(fs.createWriteStream(dir+"/"+json.output));
   doc.end();
   process.stdout.write("\n");
 
-  // then resize the images (if asked too)
-  if (json.resize && json.keepPNGs == true) resizeImages();
+  /*
+    Then resize the images if (as required).
+  */
+  if (json.thumbWidth && json.keepPNGs !== false) createThumbs();
   else process.stdout.write("and now I'm done.\n".green);
 }
 
-function resizeImages()
+function createThumbs()
 {
-  var command = "mogrify -resize '"+json.resize.full_width+"' "+dir+"/*full.png";
+  var command = "mogrify -thumbnail "+json.thumbWidth+" "+dir+"/*-thumb.png";
   process.stdout.write("resizing images        ".magenta);
-  exec(command,function()
-  {
-    process.stdout.write("done\n".white);
-    resizeThumbs();
-  });
-}
-
-function resizeThumbs()
-{
-  var command = "mogrify -resize '"+json.resize.thumb_width+"' "+dir+"/*thumb.png";
-  process.stdout.write('resizing thumbs        '.cyan);
   exec(command,function()
   {
     process.stdout.write("done\n".white);

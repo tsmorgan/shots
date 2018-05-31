@@ -48,10 +48,7 @@ In order to create a set of screens and/or a PDF there's a couple of things you 
   "output": "screens.pdf",
   "keepPNGs": true,
   "browserWidth": 960,
-  "resize" : {
-    "full_width": 1280,
-    "thumb_width": 320
-  },
+  "thumbWidth": 100,
   "pages": [
     "page1",
     "page2",
@@ -67,9 +64,9 @@ In order to create a set of screens and/or a PDF there's a couple of things you 
 
 `keepPNGS` - Can be `true` or `false` and decides whether the PNG screenshots are retained or deleted after the PDF has been created.
 
-`browserWidth` - The width that the browser will be set to when the screenshot is taken.
+`browserWidth` - The width that the browser will be set to when the screenshot is taken. On my machine the images come out twice this size (maybe because it's a retina mac) but that's better for printing so this is a bonus.
 
-`resize` - Used to specify the size of the output images you'll end up getting.
+`thumbWidth` - Set this to the width (in pixels) you want thumbnails to be. Leave it out or set it to `false` for no thumbnails. If `keepPNGS` is false no thumbnails will be made.
 
 `pages` - This is an array of page names in your prototype. They'll be appended to the webPath to generate the URL of the page to be grabbed. The order is how they’ll appear in the PDF.
 
@@ -94,4 +91,4 @@ I wanted to achieve the following:
 
 3. **Have the resulting PDF be in the right order** - This was a kind of side issue but it cropped up a couple of times when members of my team needed a quick PDF of the prototype for something and I ended up manually reordering a PDF in Preview page-by-page.
 
-So having the a data file which could both define the pages to be printed but also the order to print them seemed to work best. Creating a new folder for each different screengrabbing felt like a good way to go and then maintaining the option to retain or simply delete the PNGs that were created along the way seemed like a useful thing too.
+So having the a data file which could both define the pages to be printed but also the order to print them seemed to work best. Creating a new folder for each different screen grabbing felt like a good way to go and then maintaining the option to retain or simply delete the PNGs that were created along the way seemed like a useful thing too.
